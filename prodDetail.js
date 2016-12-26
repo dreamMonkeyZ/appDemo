@@ -11,7 +11,8 @@ import {
   TouchableWithoutFeedback,
   Image,
   ViewPagerAndroid,
-  Button
+  Button,
+  Modal
 } from "react-native";
 
 var ViewPager = require('react-native-viewpager');
@@ -221,7 +222,12 @@ export default class ProdDetail extends Component {
 					show : -1,
 					arrow : 'right'
 				}
-			}, name : 'xx'
+			},
+			modalView : {
+				animationType : 'none',
+				transparent : false,
+				visible : false
+			}
 		}
 	}
 
@@ -353,6 +359,14 @@ export default class ProdDetail extends Component {
 		}
 	}
 
+	_showModalView(){
+		let state = this.state;
+		state.modalView.animationType = 'slide';
+		state.modalView.transparent = true;
+		state.modalView.visible = true;
+		this.setState(state);
+	}
+
 	render() {
 		return (
 			<View style={{flexDirection:'column'}}>
@@ -445,15 +459,76 @@ export default class ProdDetail extends Component {
 							</Text>
 						</View>
 					</TouchableOpacity>
-					<TouchableOpacity style={{flex:1}}>
+					<TouchableOpacity style={{flex:1}} onPress={this._showModalView.bind(this)}>
 						<View style={{flex:1, backgroundColor:'#dc356d',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
 							<Text style={[styles.orderDressText,{color:'white'}]}>
 								ORDER DRESS
 							</Text>
 						</View>
 					</TouchableOpacity>
-									</View>
+					<Modal
+						style={{flex:1,width:200,height:200,justifyContent:'center',alignItems:'center',borderWidth:10,backgroundColor:'red'}}
+						animationType={this.state.modalView.animationType}
+						transparent={this.state.modalView.transparent}
+						visible={this.state.modalView.visible}
+						onRequestClose={() => {Alert.alert('1')}}
+						>
+						<View style={[styles2.container]}>
+				            <View style={[styles2.innerContainer]}>
+				              <Text>This modal was presented animation.</Text>
+				              <Button
+				              	onPress={this._showModalView.bind(this)}
+				              	title='close'
+				                style={styles2.modalButton}>
+				                Close
+				              </Button>
+				            </View>
+				         </View>					
+          			</Modal>
+				</View>
 			</View>
 		);
 	}
 }
+
+
+
+var styles2 = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#cccccc',
+    height : 200
+  },
+  innerContainer: {
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  row: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  rowTitle: {
+    flex: 1,
+    fontWeight: 'bold',
+  },
+  button: {
+    borderRadius: 5,
+    flex: 1,
+    height: 44,
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  buttonText: {
+    fontSize: 18,
+    margin: 5,
+    textAlign: 'center',
+  },
+  modalButton: {
+    marginTop: 10,
+  },
+});
