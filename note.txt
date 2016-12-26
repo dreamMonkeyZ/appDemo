@@ -1,0 +1,45 @@
+// 获取屏幕宽度
+
+import {
+	Dimensions
+} from 'react=native';
+
+var deviceWidth = Dimensions.get('window').width;
+
+
+
+<Image style = {{ flex : 1, width : 250, height : 400}} source = {{uri: imgInfo.dusk.front}} />
+						<View style = {{ flexDirection : 'row', justifyContent : 'center', marginTop : 15 }}>	
+							<Image style={{ width:10, height:10, marginLeft : 5 }} source = {require('./circle.png')} />
+							<Image style={{ width:10, height:10, marginLeft : 5 }}  source = {require('./circle_grey.png')} />
+							<Image style={{ width:10, height:10, marginLeft : 5 }} source = {require('./circle_grey.png')} />
+						</View>
+
+
+
+
+
+// tabbar
+// modal
+// button
+
+
+
+<View style={styles.tableContent}>
+									<Text style={styles.tableContentText}>
+										Jessica is our favorite mini dress with a strapless 
+										neckline. Made of chiffon, Jessica features a cinched 
+										empire waist. Available in full size range (A0-A30) and 
+										custom sizing.   
+									</Text>
+								</View>
+
+
+
+								<Modal
+						animationType={}
+						transparent={}
+						visible={}
+						onRequestClose={() => {}}
+						>
+					</Modal>
