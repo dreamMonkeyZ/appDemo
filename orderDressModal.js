@@ -19,7 +19,7 @@ const modalStyle = StyleSheet.create({
     alignItems: 'center',  
     justifyContent:'flex-end',  
     flex:1, 
-    backgroundColor : 'rgb(81,81,81)',
+    // backgroundColor : 'rgb(81,81,81)',
   },  
   // modal上子View的样式  
   subView:{  
@@ -69,6 +69,7 @@ const modalStyle = StyleSheet.create({
   	fontSize : 13,
   	height : 34,
   	lineHeight : 34,
+  	paddingRight : 20,
   	textDecorationLine : 'underline'
   },
   sizeMapping : {
@@ -258,9 +259,10 @@ export default class OrderDress extends Component {
 	}
 
 	_closeModal(){
-		let state = this.state;
-		state.modalView.visible = false;
-		this.setState(state);
+		// let state = this.state;
+		// state.modalView.visible = false;
+		// this.setState(state);
+		this.props.closeModal();
 	}
 
 	_showSizeMap(){
@@ -360,7 +362,7 @@ export default class OrderDress extends Component {
 			<Modal  
 	           animationType='slide'  
 	           transparent={true}  
-	           visible={this.state.modalView.visible} 
+	           visible={true} 
 	           onShow={() => {}}  
 	           onRequestClose={() => {}} >  
 	           <View style={modalStyle.modalStyle}>  

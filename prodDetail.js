@@ -387,12 +387,18 @@ export default class ProdDetail extends Component {
 	_showOrderDressModal(){
 		if(this.state.modalView.visible == true){
 			return (
-				<OrderDress visible={this.state.modalView.visible} updateBag = {this._updateBag.bind(this)} />
+				<OrderDress updateBag = {this._updateBag.bind(this)} closeModal = {this._closeModal.bind(this)} />
 				);
 		}
 		else {
 			return null;
 		}
+	}
+
+	_closeModal(){
+		let state = this.state;
+		state.modalView.visible = false;
+		this.setState(state);
 	}
 
 	_updateBag(){
