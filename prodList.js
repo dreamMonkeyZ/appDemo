@@ -105,9 +105,9 @@ const style = StyleSheet.create({
   },
   	shopBag : {
   		backgroundColor : '#dc356d', 
-  		height:18, 
-  		width:18, 
-  		borderRadius : 8, 
+  		height:21, 
+  		width:21, 
+  		borderRadius : 10, 
   		position : 'absolute',
   		justifyContent : 'center',
   		alignItems : 'center',
@@ -122,15 +122,30 @@ const style = StyleSheet.create({
   },})
 
 export default class ProdList extends Component {
+	constructor(props){
+		super(props);
+		this.state = {
+			goodsNumber : 0
+		};
+	}
 
 	_pressButton(){
 		const {navigator} = this.props;
 		if(navigator){
 			navigator.push({
 				name : "",
-				component: ProdDetail
+				component: ProdDetail,
+				params:{
+					updateBag : this._updateBag.bind(this)
+				}
 			});
 		}
+	}
+
+	_updateBag(){
+		let state = this.state;
+		state.goodsNumber ++;
+		this.setState(state);
 	}
 
 
@@ -202,7 +217,7 @@ componetDidAmount(){
 					</TouchableWithoutFeedback>
 					<Text style={{ color : 'black', flex : 1, marginLeft : 75, marginTop : 7, fontSize : 20}}>Azazie Jessica</Text>
 					<View style={style.shopBag}>
-						<Text style={style.shopBagText}>0</Text>
+						<Text style={style.shopBagText}>{this.state.goodsNumber}</Text>
 					</View>
 					<Image style={{width:25, height:24, marginTop:7, marginRight:10}} source={require('./shop_bag.png')} />
 				</View>

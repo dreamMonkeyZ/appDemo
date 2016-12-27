@@ -12,10 +12,13 @@ import {
   Image,
   ViewPagerAndroid,
   Button,
-  Modal
+  Modal,
+  Animated
 } from "react-native";
 
 var ViewPager = require('react-native-viewpager');
+
+import OrderDress from "./orderDressModal.js";
 
 const imgInfo = {
 	"default" : {
@@ -109,7 +112,7 @@ const colorBlock = [
 ]
 
 const styles = StyleSheet.create({  
-    page: {  
+    page: { 
         flex: 1,  
         height: 400,
         width: 200, 
@@ -122,9 +125,9 @@ const styles = StyleSheet.create({
     },
    	shopBag : {
   		backgroundColor : '#dc356d', 
-  		height:18, 
-  		width:18, 
-  		borderRadius : 8, 
+  		height:21, 
+  		width:21, 
+  		borderRadius : 10, 
   		position : 'absolute',
   		justifyContent : 'center',
   		alignItems : 'center',
@@ -208,11 +211,13 @@ export default class ProdDetail extends Component {
 			tableView : {
 				"color" : {
 					show : 1,
-					arrow : 'down'
+					arrow : 'down',
+					// opacity : new Animated.Value(1)
 				},
 				"info" : {
 					show : -1,
-					arrow : 'right'
+					arrow : 'right',
+					// opacity : new Animated.Value(0)
 				},
 				"shipping" : {
 					show : -1,
@@ -221,13 +226,12 @@ export default class ProdDetail extends Component {
 				"review" : {
 					show : -1,
 					arrow : 'right'
-				}
+				},
 			},
-			modalView : {
-				animationType : 'none',
-				transparent : false,
+			"modalView" :{
 				visible : false
-			}
+			},
+			goodsNumber : 0
 		}
 	}
 
@@ -299,7 +303,7 @@ export default class ProdDetail extends Component {
 					return block;
 				}.bind(this));
 				return (
-					<View style={styles.tableContentColor}>
+					<View style={[styles.tableContentColor]}>
 						{colorBlocks}
 					</View>
 					);
@@ -341,8 +345,23 @@ export default class ProdDetail extends Component {
 		state['tableView'][type]['show'] = state['tableView'][type]['show'] * -1;
 		if(state['tableView'][type]['arrow'] == 'down'){
 			state['tableView'][type]['arrow'] = 'right';
+			//添加淡出效果
+			// Animated.timing(this['state']['tableView'][type]['opacity'],{toValue:1},).start();
 		}else{
 			state['tableView'][type]['arrow'] = 'down';
+			// Animated.timing(this['state']['tableView'][type]['opacity'],{toValue:1},).start();
+			//添加淡入效果
+		}
+	
+		// 如果当前的操作是展开tableview，那么收回其他的tableview
+		if(state['tableView'][type]['show'] == 1){
+			for(var index in state['tableView']){
+				if(index != type){
+					state['tableView'][index]['show'] = -1;
+					// todo: 添加淡出效果
+					state['tableView'][index]['arrow'] = 'right';
+				}
+			}
 		}
 		this.setState(state);
 	}
@@ -359,18 +378,34 @@ export default class ProdDetail extends Component {
 		}
 	}
 
-	_showModalView(){
+	_setModalVisible(isVisible){
 		let state = this.state;
-		state.modalView.animationType = 'slide';
-		state.modalView.transparent = true;
-		state.modalView.visible = true;
+		state.modalView.visible = isVisible;
 		this.setState(state);
+	}
+
+	_showOrderDressModal(){
+		if(this.state.modalView.visible == true){
+			return (
+				<OrderDress visible={this.state.modalView.visible} updateBag = {this._updateBag.bind(this)} />
+				);
+		}
+		else {
+			return null;
+		}
+	}
+
+	_updateBag(){
+		let state = this.state;
+		state.goodsNumber ++;
+		this.setState(state);
+		this.props.updateBag();
 	}
 
 	render() {
 		return (
 			<View style={{flexDirection:'column'}}>
-				<View style={{ flexDirection : 'row', flex : 1, borderBottomColor : '#cccccc', borderBottomWidth : 1, marginTop : 18}}>
+				<View style={{height:42,zIndex:1003, flexDirection : 'row', flex : 1, borderBottomColor : '#cccccc', borderBottomWidth : 1, marginTop : 18}}>
 					<TouchableWithoutFeedback onPress={this._pressButton.bind(this)}>
 						<View>
 							<Text style={{ color : 'black', lineHeight : 40, fontSize : 16, marginLeft : 5, fontWeight : 'bold'}}>Back</Text>
@@ -378,19 +413,19 @@ export default class ProdDetail extends Component {
 					</TouchableWithoutFeedback>
 					<Text style={{ color : 'black', flex : 1, marginLeft : 75, marginTop : 7, fontSize : 20}}>Azazie Jessica</Text>
 					<View style={styles.shopBag}>
-						<Text style={styles.shopBagText}>0</Text>
+						<Text style={styles.shopBagText}>{this.state.goodsNumber}</Text>
 					</View>
 					<Image style={{width:25, height:24, marginTop:7, marginRight:10}} source={require('./shop_bag.png')} />
 				</View>
-				<ScrollView style = {{ flexDirection : 'column', width:375 }} >
+				<ScrollView style = {{ flexDirection : 'column', width:375,height:556 }} >
 					<ViewPager
 				        style={{flex : 1}}
 				        dataSource={new ViewPager.DataSource({
 							        	pageHasChanged: (p1, p2) => p1 !== p2,  
 								    }).cloneWithPages(this.state.imgViewer)}
 				        renderPage={this._renderPage}
-				        isLoop={true}
-				        autoPlay={true} />
+				        isLoop={false}
+				        autoPlay={false} />
 					<View key='prodImg' style = {{paddingBottom:16,width : 355,alignItems : 'center', flexDirection : 'column', borderBottomColor : '#cccccc', borderBottomWidth:1, marginLeft : 10}}>
 						<View style = {{ flexDirection : 'row', justifyContent : 'flex-start', marginTop : 20 }}>
 							<Text style = {{ textAlign : 'left', flex : 1 }}> Azazie Jessica        $119</Text>
@@ -459,76 +494,16 @@ export default class ProdDetail extends Component {
 							</Text>
 						</View>
 					</TouchableOpacity>
-					<TouchableOpacity style={{flex:1}} onPress={this._showModalView.bind(this)}>
+					<TouchableOpacity style={{flex:1}} onPress={this._setModalVisible.bind(this,true)}>
 						<View style={{flex:1, backgroundColor:'#dc356d',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
 							<Text style={[styles.orderDressText,{color:'white'}]}>
 								ORDER DRESS
 							</Text>
 						</View>
 					</TouchableOpacity>
-					<Modal
-						style={{flex:1,width:200,height:200,justifyContent:'center',alignItems:'center',borderWidth:10,backgroundColor:'red'}}
-						animationType={this.state.modalView.animationType}
-						transparent={this.state.modalView.transparent}
-						visible={this.state.modalView.visible}
-						onRequestClose={() => {Alert.alert('1')}}
-						>
-						<View style={[styles2.container]}>
-				            <View style={[styles2.innerContainer]}>
-				              <Text>This modal was presented animation.</Text>
-				              <Button
-				              	onPress={this._showModalView.bind(this)}
-				              	title='close'
-				                style={styles2.modalButton}>
-				                Close
-				              </Button>
-				            </View>
-				         </View>					
-          			</Modal>
 				</View>
+				{this._showOrderDressModal()}
 			</View>
 		);
 	}
 }
-
-
-
-var styles2 = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: '#cccccc',
-    height : 200
-  },
-  innerContainer: {
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  row: {
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row',
-    marginBottom: 20,
-  },
-  rowTitle: {
-    flex: 1,
-    fontWeight: 'bold',
-  },
-  button: {
-    borderRadius: 5,
-    flex: 1,
-    height: 44,
-    alignSelf: 'stretch',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  buttonText: {
-    fontSize: 18,
-    margin: 5,
-    textAlign: 'center',
-  },
-  modalButton: {
-    marginTop: 10,
-  },
-});
