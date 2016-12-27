@@ -19,7 +19,7 @@ const modalStyle = StyleSheet.create({
     alignItems: 'center',  
     justifyContent:'flex-end',  
     flex:1, 
-    // backgroundColor : '#cccccc',
+    backgroundColor : 'rgb(81,81,81)',
   },  
   // modal上子View的样式  
   subView:{  
@@ -31,7 +31,7 @@ const modalStyle = StyleSheet.create({
     alignItems : 'center',
     borderWidth: 0.5,  
     borderColor:'#ccc',  
-    height : 400
+    height : 450
   },   
   // 按钮  
   addToBag:{  
@@ -48,10 +48,13 @@ const modalStyle = StyleSheet.create({
     textAlign:'center',  
   },  
   selectSize : {
-  	flex :1,
   	flexDirection : 'row',
+  	justifyContent :'center',
   	paddingLeft : 15,
-  	paddingRight : 14
+  	paddingRight : 14,
+  	height:35,
+  	marginTop: 20,
+  	marginBottom:20
   },
   selectSizePrompt :{
   	color : 'rgb(114,114,114)',
@@ -70,17 +73,21 @@ const modalStyle = StyleSheet.create({
   },
   sizeMapping : {
   	flex : 1,
-  	flexDirection : 'column',
-  	width : 350
+  	flexDirection : 'column',	
+  	width : 350,
+  	height: 150,
+  	marginBottom : 20
   },
   sizeView : {
   	paddingLeft : 2,
   	paddingRight : 2,
   	// marginBottom : 10,
+  	paddingBottom : 5,
   	borderColor : 'rgb(114,114,114)',
-  	flex : 1,
   	justifyContent : 'center',
   	alignItems : 'center',
+  	height : 50,
+  	overflow : 'visible'
   },
   sizeText: {
   	// marginBottom : 10,
@@ -90,10 +97,10 @@ const modalStyle = StyleSheet.create({
   	borderColor : 'rgb(230,230,230)',
   	width : 60,
   	height :28,
-  	lineHeight : 28
+  	lineHeight : 28,
+  	marginBottom:10
   },
   tabContainer : {
-  	flex : 1,
   	flexDirection : 'row',
   	alignItems : 'center',
   	width : 340
@@ -118,13 +125,12 @@ const modalStyle = StyleSheet.create({
   	borderColor : '#dc356d'
   },
   descriptionText:{
-  	marginTop : 15,
+  	marginTop : 50,
   	flexDirection : 'row',
   	alignItems : 'flex-start',
   	padding : 10,
   	height : 100,
   	width : 350,
-
   },
   descriptChild: {
   	fontWeight : '100',
@@ -137,14 +143,12 @@ const modalStyle = StyleSheet.create({
 
   },
   inputSize:{
-  	flex:1,
-  	justifyContent:'flex-start',
   	alignItems:'flex-start',
-  	flexDirection:'row',
-  	width:350
+  	width:350,
+  	marginTop:20,
+  	marginLeft: 20,
   },
   inputText:{
-  	flex:1,
   	color : 'rgb(114,114,114)',
   	textAlign:'center'
   },
@@ -167,6 +171,11 @@ const sizeMap = [
 	{'size' : 'A14'},
 	{'size' : 'A16'},
 	{'size' : 'A18'},
+	{'size' : 'A20'},
+	{'size' : 'A22'},
+	{'size' : 'A24'},
+	{'size' : 'A26'},
+	{'size' : 'A28'},
 ]
 
 
@@ -196,6 +205,11 @@ export default class OrderDress extends Component {
 				'A14' : modalStyle.colorStatic,
 				'A16' : modalStyle.colorStatic,
 				'A18' : modalStyle.colorStatic,
+				'A20' : modalStyle.colorStatic,
+				'A22' : modalStyle.colorStatic,
+				'A24' : modalStyle.colorStatic,
+				'A26' : modalStyle.colorStatic,
+				'A28' : modalStyle.colorStatic,
 			},
 			goodsNumber : 0
 		}
@@ -264,7 +278,7 @@ export default class OrderDress extends Component {
 		if(this.state.tabShow == 'standard'){
 			for(let i = 0; i < sizeMap.length; i = i + 5){
 				size.push(
-						<View key={'sizeView' + i} style={{flexDirection:'row', flex:1}}>
+						<View key={'sizeView' + i} style={{flexDirection:'row',height:40,justifyContent:'center',paddingBottom:12}}>
 							<TouchableWithoutFeedback key={'size-touch'+i} onPress={this._sizeSelected.bind(this,sizeMap[i]['size'])}>
 								<View key={'size'+i} style={modalStyle.sizeView}>
 									<Text style={[modalStyle.sizeText,this.state.sizeColor[sizeMap[i]['size']]]}>{sizeMap[i]['size']}</Text>
@@ -293,12 +307,7 @@ export default class OrderDress extends Component {
 						</View>
 					);
 			}
-		}else{
-			size.push(
-				<Image key='tabImg' style={{width:250, height:350, flex:1, resizeMode : 'contain'}} source={require('./customerSizeBg.png')} />
-				);
-		}
-		
+		}		
 		return (
 			<View key='sizeMapping' style={modalStyle.sizeMapping}>
 				{size}
@@ -314,6 +323,25 @@ export default class OrderDress extends Component {
 	              		<Text style={modalStyle.descriptChild}> Hi lovely! Check our handy size chart to confirm that {"\n"}
 	              		you're ordering the right size.</Text>
 	              </View>
+				);
+		}else{
+			return null;
+		}
+	}
+
+	_showCustomImg(){
+		if(this.state.tabShow == 'custom'){
+			return (
+				<View key='tabImgView' style={{
+							marginTop : 15,
+						  	flexDirection : 'row',
+						  	alignItems : 'flex-start',
+						  	padding : 10,
+						  	height : 190,
+						  	width : 350,
+						}}>
+					<Image key='tabImg' style={{height:220,width:200,resizeMode:'contain'}} source={require('./customerSizeBg.png')} />
+				</View>
 				);
 		}else{
 			return null;
@@ -371,15 +399,16 @@ export default class OrderDress extends Component {
 	               			<Text style={modalStyle.inputText}>INPUT YOUR DRESS SIZE</Text>
 	               		</View>
 	               }
+	               {this._showCustomImg()}
 	               {this._showSelectSize()}
 	               {this._showSizeMap()}
 	               {this._showSizeCheck()}
 	               <View style={modalStyle.addToBag}>
-	                 <TouchableHighlight underlayColor='transparent' onPress = {this._addToBag.bind(this)} >
+	                 <TouchableOpacity style={{width:350}} onPress = {this._addToBag.bind(this)} >
 	              		<Text style={modalStyle.buttonText}>
 	              			ADD TO BAG
 	              		</Text>
-	                 </TouchableHighlight>  
+	                 </TouchableOpacity>  
 	               </View>  
 	             </View>  
 	           </View>  
